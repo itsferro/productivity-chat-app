@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.routes import api_router
+from routes import api_router
 """
 """
 
