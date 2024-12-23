@@ -15,22 +15,20 @@ db = {}
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-app = FastAPI()
+revoked_tokens = set()
 
+app = FastAPI()
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-
 def get_password_hash(password):
     return pwd_context.hash(password)
-
 
 def get_user(db, username: str):
     if username in db:
         user_data = db[username]
         return UserInDB(**user_data)
-
 
 def authenticate_user(db, username: str, password: str):
     user = get_user(db, username)
@@ -40,7 +38,6 @@ def authenticate_user(db, username: str, password: str):
         return False
 
     return user
-
 
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
@@ -53,10 +50,16 @@ def create_access_token(data: dict, expires_delta: timedelta):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credential_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                          detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
+    if token in revoked_tokens:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been revoked",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
@@ -73,13 +76,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     return user
 
-
 async def get_current_active_user(current_user: UserInDB = Depends(get_current_user)):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
 
     return current_user
-
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -92,11 +93,29 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": user.username}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
 
+@app.post("/auth/logout")
+async def logout(token: str = Depends(oauth2_scheme)):
+    revoked_tokens.add(token)
+    return {"message": "Logged out successfully"}
+
+@app.post("/auth/signup")
+async def signup(username: str, password: str, email: str, phone_number: str):
+    if username in db:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    hashed_password = get_password_hash(password)
+    db[username] = {
+        "username": username,
+        "email": email,
+        "phone_number": phone_number,
+        "hashed_password": hashed_password,
+        "disabled": False
+    }
+    return {"message": "User created successfully"}
 
 @app.get("/users/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
-
 
 @app.get("/users/me/items")
 async def read_own_items(current_user: User = Depends(get_current_active_user)):
