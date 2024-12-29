@@ -1,2 +1,8 @@
 api/__pycache__/
 api/routes/__pycache__/
+api/routes/.auth.py.swp
+api/routes/.users.py.swp
+api/schemas/__pycache__/
+api/utils/.jwt.py.swp
+api/utils/__pycache__/
+env/

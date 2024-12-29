@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from utils.jwt import get_current_active_user
+from schemas.auth import User
 """
 """
 
@@ -7,7 +9,7 @@ router = APIRouter(prefix="/users")
 
 
 @router.get("/")
-def retrieve_users():
+def retrieve_users(current_user: User = Depends(get_current_active_user)):
     return {
             "users": [
                 {
@@ -24,7 +26,7 @@ def retrieve_users():
 
 
 @router.get("/{id}")
-def retrieve_user_profile_detail():
+def retrieve_user_profile_detail(current_user: User = Depends(get_current_active_user)):
     return {
             "user_id": 1,
             "username": "user123",
@@ -48,7 +50,7 @@ def retrieve_user_profile_detail():
 
 
 @router.put("/{id}")
-def update_user_profile_detail():
+def update_user_profile_detail(current_user: User = Depends(get_current_active_user)):
     return {"user_id": 1,
             "username": "user123",
             "email": "user123@example.com",
@@ -71,7 +73,7 @@ def update_user_profile_detail():
 
 
 @router.get("/{id}/status")
-def check_online_offline_status():
+def check_online_offline_status(current_user: User = Depends(get_current_active_user)):
     return {
             "message": "offline",
             "last_seen": "2024-01-02T12:00:00Z"
@@ -79,14 +81,14 @@ def check_online_offline_status():
 
 
 @router.delete("/{id}")
-def delete_user():
+def delete_user(current_user: User = Depends(get_current_active_user)):
      return {
              "message": "user deleted successfully"
              }
 
 
 @router.post("/bans")
-def user_bans_list_control():
+def user_bans_list_control(current_user: User = Depends(get_current_active_user)):
     return {
             "message": "you successfully added user 6 to your 'benned users' list"
             }
