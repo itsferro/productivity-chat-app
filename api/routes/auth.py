@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+from db import get_db
 from datetime import datetime, timedelta
 from utils.jwt import get_password_hash
 from utils.jwt import authenticate_user
@@ -16,7 +18,7 @@ router = APIRouter(prefix="/auth")
 
 
 @router.post("/signup")
-async def user_signup(username: str, password: str):
+async def user_signup(username: str, password: str, db: Session = Depends(get_db)):
     """
     """
     if username in db:
@@ -33,7 +35,7 @@ async def user_signup(username: str, password: str):
             }
 
 @router.post("/login")
-async def user_login(form_data: OAuth2PasswordRequestForm = Depends()):
+async def user_login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
     """
     user = authenticate_user(db, form_data.username, form_data.password)
@@ -55,7 +57,7 @@ async def user_login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.post("/logout")
-async def user_logout(token: str = Depends(oauth2_scheme)):
+async def user_logout(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """
     """
     revoke_token(token)
