@@ -15,10 +15,15 @@ class TokenData(BaseModel):
     username: str
 
 
-class User(BaseModel):
+class Pyuser(BaseModel):
     """
     """
     username: str
+    email: str = None
     phone: str = None
-    disabled: bool
     hashed_password: str
+    disabled: bool = False
+    todoist_token: str = None
+    last_seen_online: datetime = None
+    created_at: datetime
+    updated_at: datetime = None
