@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends
 from utils.jwt import get_current_active_user
-from schemas.auth import User
+from models.users import User
+from db import get_db
+from sqlalchemy.orm import Session
 """
 """
 
@@ -9,7 +11,9 @@ router = APIRouter(prefix="/users")
 
 
 @router.get("/")
-def retrieve_users(current_user: User = Depends(get_current_active_user)):
+def retrieve_users(current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    return {current_user}
+    """
     return {
             "users": [
                 {
@@ -23,10 +27,11 @@ def retrieve_users(current_user: User = Depends(get_current_active_user)):
                     }
                 ]
             }
+            """
 
 
 @router.get("/{id}")
-def retrieve_user_profile_detail(current_user: User = Depends(get_current_active_user)):
+def retrieve_user_profile_detail(current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
     return {
             "user_id": 1,
             "username": "user123",
@@ -50,7 +55,7 @@ def retrieve_user_profile_detail(current_user: User = Depends(get_current_active
 
 
 @router.put("/{id}")
-def update_user_profile_detail(current_user: User = Depends(get_current_active_user)):
+def update_user_profile_detail(current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
     return {"user_id": 1,
             "username": "user123",
             "email": "user123@example.com",
@@ -73,7 +78,7 @@ def update_user_profile_detail(current_user: User = Depends(get_current_active_u
 
 
 @router.get("/{id}/status")
-def check_online_offline_status(current_user: User = Depends(get_current_active_user)):
+def check_online_offline_status(current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
     return {
             "message": "offline",
             "last_seen": "2024-01-02T12:00:00Z"
@@ -81,14 +86,14 @@ def check_online_offline_status(current_user: User = Depends(get_current_active_
 
 
 @router.delete("/{id}")
-def delete_user(current_user: User = Depends(get_current_active_user)):
+def delete_user(current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
      return {
              "message": "user deleted successfully"
              }
 
 
 @router.post("/bans")
-def user_bans_list_control(current_user: User = Depends(get_current_active_user)):
+def user_bans_list_control(current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
     return {
             "message": "you successfully added user 6 to your 'benned users' list"
             }

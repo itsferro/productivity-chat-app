@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db import get_db
+from models.users import User
 from datetime import datetime, timedelta
 from utils.jwt import get_password_hash
 from utils.jwt import authenticate_user
 from utils.jwt import create_access_token
 from utils.jwt import revoke_token
+from utils.jwt import get_user
 """
 """
 
@@ -18,20 +20,23 @@ router = APIRouter(prefix="/auth")
 
 
 @router.post("/signup")
-async def user_signup(username: str, password: str, db: Session = Depends(get_db)):
+async def user_signup(username: str, password: str, email: str, db: Session = Depends(get_db)):
     """
     """
-    if username in db:
+    user = get_user(db, username)
+    if user:
         raise HTTPException(status_code=400, detail="Username already exists")
 
     hashed_password = get_password_hash(password)
-    db[username] = {
-        "username": username,
-        "hashed_password": hashed_password,
-        "disabled": False
-    }
+    user = User(
+        username=username,
+        email=email,
+        hashed_password=hashed_password
+        )
+    user.create(db)
     return {
-            "message": "User registered successfully"
+            "message": "User registered successfully",
+            "user_data": user
             }
 
 @router.post("/login")
