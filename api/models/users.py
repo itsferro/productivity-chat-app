@@ -14,10 +14,9 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, nullable=False, unique=True)
-    email = Column(String, nullable=False, unique=True)
+    email = Column(String, nullable=True)
     phone = Column(String, nullable=True)
-    hashed_password = Column(String, nullable=False)
-    disabled = Column(Boolean, default=False)
+    password = Column(String, nullable=False)
     todoist_token = Column(String, nullable=True)
     last_seen_online = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
