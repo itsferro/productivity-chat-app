@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from typing import Optional
+from db import get_db
 from utils.jwt import get_current_user
 from models.users import User
-from db import get_db
-from sqlalchemy.orm import Session
+from schemas.users import UsersList
 """
 """
 
@@ -12,9 +14,23 @@ router = APIRouter(
         tags=['Users'])
 
 
-@router.get("/")
-def retrieve_users(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    return {current_user}
+@router.get("/", response_model=UsersList)
+def retrieve_users(
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db),
+        limit: int = 10,
+        skip: int = 0,
+        search: Optional[str] = ""
+        ):
+
+    users = db.query(User).filter(User.username.contains(search)).limit(limit).offset(skip).all()
+
+    return {
+            "skiped": skip,
+            "limit": limit,
+            "search_value": search,
+            "users": users
+            }
     """
     return {
             "users": [

@@ -32,3 +32,12 @@ class UserProfile(UserOut):
     todoist_token: str
     created_at: datetime
     updated_at: datetime
+
+
+class UsersList(BaseModel):
+    """
+    """
+    skiped: int
+    limit: int
+    search_value: Optional[str]
+    users: list[UserOut]
