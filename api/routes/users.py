@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Optional, Union
+from datetime import datetime
 from db import get_db
 from utils.jwt import get_current_user, hash_password, verify_password
 from models.users import User
@@ -96,6 +97,7 @@ def update_user_profile_detail(
         else:
             updated_user.password = current_user.password
 
+        updated_user.updated_at = datetime.now()
         try:
             update_data = updated_user.dict(exclude_unset=True)
             current_user.update(db, **update_data)
