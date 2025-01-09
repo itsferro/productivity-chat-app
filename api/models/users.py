@@ -20,7 +20,7 @@ class User(Base):
     todoist_token = Column(String, nullable=True)
     last_seen_online = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), nullable=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 #    conversations = relationship("ConversationParticipant", back_populates="user")
 #    sent_messages = relationship('Message', back_populates='sender', foreign_keys='Message.sender_id')
 #    received_messages = relationship('Message', back_populates='recipient', foreign_keys='Message.recipient_id')
