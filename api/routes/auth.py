@@ -50,8 +50,8 @@ def user_login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Sess
 
     if not user:
         raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid Credentials",
                 headers={"WWW-Authenticate": "Bearer"}
                 )
 
