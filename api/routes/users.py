@@ -97,7 +97,7 @@ def update_user_profile_detail(
         else:
             updated_user.password = current_user.password
 
-        updated_user.updated_at = datetime.now()
+        updated_user.updated_at = datetime.utcnow()
         try:
             update_data = updated_user.dict(exclude_unset=True)
             current_user.update(db, **update_data)
