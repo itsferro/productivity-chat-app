@@ -49,6 +49,19 @@ def retrieve_users(
                 )
 
 
+@router.get("/{id}/status")
+def check_online_offline_status(
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
+        ):
+    """
+    """
+    return {
+            "message": "offline",
+            "last_seen": "2024-01-02T12:00:00Z"
+            }
+
+
 @router.get("/{id}", response_model=Union[UserProfile, UserOut])
 def retrieve_user_profile_detail(
         user_id: int,
@@ -89,7 +102,14 @@ def update_user_profile_detail(
         ):
     """
     """
-    if current_user.id is user_id:
+    if user_id <= 0:
+        raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="user id can't be less than or equal to zero.",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
+
+    if user_id is current_user.id:
         if updated_user.password is None:
             updated_user.password = current_user.password
         elif not verify_password(updated_user.password, current_user.password):
@@ -106,7 +126,7 @@ def update_user_profile_detail(
             print(e)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error",
+                detail="Internal server error (database related)",
                 headers={"WWW-Authenticate": "Bearer"}
                 )
     else:
@@ -117,23 +137,48 @@ def update_user_profile_detail(
                 )
 
 
-@router.get("/{id}/status")
-def check_online_offline_status(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    return {
-            "message": "offline",
-            "last_seen": "2024-01-02T12:00:00Z"
-            }
-
-
 @router.delete("/{id}")
-def delete_user(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-     return {
-             "message": "user deleted successfully"
-             }
+def delete_user(
+        user_id: int,
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
+        ):
+    """
+    """
+    if user_id <= 0:
+        raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="user id can't be less than or equal to zero.",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
+    if user_id is current_user.id:
+        try:
+            current_user.delete(db)
+            return {
+                    "message": "user deleted successfully"
+                    }
+        except Exception as e:
+            print(e)
+            raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="ther's no user with this id.",
+                    headers={"WWW-Authenticate": "Bearer"}
+                    )
+    else:
+        raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="you're only allowed to delete your own profile, You are not allowed to delete another user's profile.",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
 
 
 @router.post("/bans")
-def user_bans_list_control(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_bans_list_control(
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
+        ):
+    """
+    """
     return {
             "message": "you successfully added user 6 to your 'benned users' list"
             }
