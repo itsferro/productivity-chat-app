@@ -1,31 +1,59 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
+from schemas.users import UserOut
+from schemas.messages import MessOut
 """
 """
+
+
+class ConvIn(BaseModel):
+    """
+    """
+    participants: list[int]
+    priority: Optional[str] = None
+    title: Optional[str] = None
 
 
 class ConvOut(BaseModel):
     """
     """
     id: int
-    partecepants: Optional[list[int]] = list[None]
-    priority: str
     title: Optional[str] = None
-    created_at: datetime
+    participants: list[UserOut]
+    priority: Optional[int] = None
     updated_at: Optional[datetime] = None
+
+class ConvDetails(ConvOut):
+    """
+    """
+    created_at: datetime
 
 
 class ConvList(BaseModel):
     """
     """
+    skiped: int
+    limit: int
+    search_value: Optional[str]
     conversations: list[ConvOut]
 
 
 class ConvUpdate(BaseModel):
     """
     """
-    partecepants: Optional[list[int]] = list[None]
-    priority: Optional[str] = None
     title: Optional[str] = None
-    updated_at: Optional[datetime] = None
+    participants: Optional[list[int]] = list[None]
+    priority: Optional[str] = None
+
+
+class ConvMessages(BaseModel):
+    """
+    """
+    id: int
+    title: Optional[str] = None
+    participants: list[UserOut]
+    skiped: int
+    limit: int
+    search_value: Optional[str]
+    messages: list[MessOut]

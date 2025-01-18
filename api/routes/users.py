@@ -12,7 +12,8 @@ from schemas.users import UsersList, UserProfile, UserOut, UserUpdate
 
 router = APIRouter(
         prefix="/users",
-        tags=['Users'])
+        tags=['Users']
+        )
 
 
 @router.get("/", response_model=UsersList)
@@ -21,7 +22,7 @@ def retrieve_users(
         db: Session = Depends(get_db),
         limit: int = 10,
         skip: int = 0,
-        search: Optional[str] = ""
+        search: Optional[str] = None
         ):
     """
     """
@@ -33,7 +34,10 @@ def retrieve_users(
                 )
 
     try:
-        users = db.query(User).filter(User.username.contains(search)).limit(limit).offset(skip).all()
+        if search:
+            users = db.query(User).filter(User.username.contains(search)).limit(limit).offset(skip).all()
+        else:
+            users = db.query(User).limit(limit).offset(skip).all()
         return {
                 "skiped": skip,
                 "limit": limit,
@@ -55,6 +59,7 @@ def check_online_offline_status(
         db: Session = Depends(get_db)
         ):
     """
+    still under development
     """
     return {
             "message": "offline",
@@ -117,9 +122,9 @@ def update_user_profile_detail(
         else:
             updated_user.password = current_user.password
 
-        updated_user.updated_at = datetime.utcnow()
         try:
             update_data = updated_user.dict(exclude_unset=True)
+            current_user.updated_at = datetime.utcnow()
             current_user.update(db, **update_data)
             return current_user
         except Exception as e:
@@ -178,6 +183,7 @@ def user_bans_list_control(
         db: Session = Depends(get_db)
         ):
     """
+    still under development
     """
     return {
             "message": "you successfully added user 6 to your 'benned users' list"

@@ -2,14 +2,12 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Bool
 from sqlalchemy.orm import relationship, Session
 from datetime import datetime
 from sqlalchemy.sql import func
-from db import Base
+from base import Base
 """
 """
 
 
 class User(Base):
-    """
-    """
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -21,10 +19,14 @@ class User(Base):
     last_seen_online = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-#    conversations = relationship("ConversationParticipant", back_populates="user")
-#    sent_messages = relationship('Message', back_populates='sender', foreign_keys='Message.sender_id')
-#    received_messages = relationship('Message', back_populates='recipient', foreign_keys='Message.recipient_id')
-#    tasks = relationship("Task", back_populates="user")
+
+    conversations = relationship(
+        "Conversation",
+        secondary="conversation_participants",
+#        primaryjoin="User.id == conversation_participants.c.user_id",
+#        secondaryjoin="Conversation.id == conversation_participants.c.conversation_id",
+#        back_populates="participants",
+    )
 
     def create(self, db: Session):
         """Add this user to the database."""

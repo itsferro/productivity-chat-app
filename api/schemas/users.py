@@ -54,7 +54,6 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     todoist_token: Optional[str] = None
-    updated_at: Optional[datetime] = datetime.now()
 
     class Config:
         from_attributes = True
