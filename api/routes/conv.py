@@ -220,7 +220,7 @@ def retrieve_conversation_content(
 
 @router.delete("/{id}")
 def delete_conversation(
-        id: int,
+        conv_id: int,
         current_user: User = Depends(get_current_user),                                                                             db: Session = Depends(get_db)
         ):
     """
@@ -232,7 +232,7 @@ def delete_conversation(
                 headers={"WWW-Authenticate": "Bearer"}
                 )
     try:
-        conversation = db.query(Conversation).join(ConversationParticipants, Conversation.id == ConversationParticipants.conversation_id).filter(ConversationParticipants.user_id == current_user.id).filter(Conversation.id == id).first()
+        conversation = db.query(Conversation).join(ConversationParticipants, Conversation.id == ConversationParticipants.conversation_id).filter(ConversationParticipants.user_id == current_user.id).filter(Conversation.id == conv_id).first()
         try:
             conversation.delete(db)
             return {

@@ -12,16 +12,16 @@ class Conversation(Base):
     __tablename__ = "conversations"
 
     id = Column(Integer, primary_key=True, index=True)
-    priority = Column(Integer, default=3)
     title = Column(String, nullable=True)
+    priority = Column(Integer, default=3)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
 
     participants = relationship(
         "User",
         secondary="conversation_participants",
-#        primaryjoin="Conversation.id == conversation_participants.c.conversation_id",
-#        secondaryjoin="User.id == conversation_participants.c.user_id",
         back_populates="conversations",
     )
     

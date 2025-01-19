@@ -23,9 +23,6 @@ class User(Base):
     conversations = relationship(
         "Conversation",
         secondary="conversation_participants",
-#        primaryjoin="User.id == conversation_participants.c.user_id",
-#        secondaryjoin="Conversation.id == conversation_participants.c.conversation_id",
-#        back_populates="participants",
     )
 
     def create(self, db: Session):
