@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
 from schemas.users import UserOut
-from schemas.messages import MessOut
+from schemas.messages import MessOut, MessList
 """
 """
 
@@ -33,7 +33,7 @@ class ConvDetails(ConvOut):
 class ConvList(BaseModel):
     """
     """
-    skiped: int
+    skipped: int
     limit: int
     search_value: Optional[str]
     conversations: list[ConvOut]
@@ -53,7 +53,4 @@ class ConvMessages(BaseModel):
     id: int
     title: Optional[str] = None
     participants: list[UserOut]
-    skiped: int
-    limit: int
-    search_value: Optional[str]
-    messages: list[MessOut]
+    conv_messages: MessList

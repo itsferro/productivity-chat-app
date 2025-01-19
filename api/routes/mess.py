@@ -99,7 +99,7 @@ def edit_message(
                 )
     if updated_mess:
         try:
-            message = db.query(Message).filter(Message.id == mess_id).first()
+            message = db.query(Message).filter(Message.id == mess_id).filter(Message.sender_id == current_user.id).first()
         except Exception as e:
             print(e)
             raise HTTPException(
@@ -107,7 +107,7 @@ def edit_message(
                     detail="Internal server error",
                     headers={"WWW-Authenticate": "Bearer"}
                     )
-        if message and message.sender_id is current_user.id:
+        if message:
             print(message)
             message.updated_at = datetime.utcnow()
             message.update(db, **updated_mess.dict(exclude_unset=True))
@@ -142,7 +142,7 @@ def delete_message(
                 headers={"WWW-Authenticate": "Bearer"}
                 )
     try:
-        message = db.query(Message).filter(Message.id == mess_id).first()
+        message = db.query(Message).filter(Message.id == mess_id).filter(Message.sender_id == current_user.id).first()
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -150,7 +150,7 @@ def delete_message(
                 detail="Internal server error",
                 headers={"WWW-Authenticate": "Bearer"}
                 )
-    if message and message.sender_id is current_user.id:
+    if message:
         print(message)
         try:
             message.delete(db)

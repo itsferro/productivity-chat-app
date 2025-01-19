@@ -7,6 +7,7 @@ from utils.jwt import get_current_user
 from models.users import User
 from models.conversations import Conversation
 from models.relations_models import ConversationParticipants
+from models.messages import Message
 from schemas.conversations import ConvIn, ConvOut, ConvDetails, ConvUpdate, ConvList, ConvMessages
 """
 """
@@ -75,7 +76,7 @@ def retrieve_logged_in_user_conversations(
         else:
             conversations = db.query(Conversation).join(ConversationParticipants, Conversation.id == ConversationParticipants.conversation_id).filter(ConversationParticipants.user_id == current_user.id).limit(limit).offset(skip).all()
         return {
-                "skiped": skip,
+                "skipped": skip,
                 "limit": limit,
                 "search_value": search,
                 "conversations": conversations
@@ -181,7 +182,7 @@ def update_conversation_details(
 
 @router.get("/{id}", response_model=ConvMessages)
 def retrieve_conversation_content(
-        id: int,
+        conv_id: int,
         current_user: User = Depends(get_current_user),                                                                             db: Session = Depends(get_db),
         limit: int = 10,                                                                                                            skip: int = 0,                                                                                                              search: Optional[str] = None
         ):
@@ -193,29 +194,37 @@ def retrieve_conversation_content(
                 detail="conversation id can't be less than or equal to zero.",
                 headers={"WWW-Authenticate": "Bearer"}
                 )
-    if limit <= 0 or skip < 0:                                                                                                      raise HTTPException(                                                                                                                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,                                                                           detail="limit param can't be less than or equal to zero, and skip param can't be less than zero.",                          headers={"WWW-Authenticate": "Bearer"}                                                                                      )
-    return {
-            "conversation_id": 5,
-            "participants": [1, 2],
-            "messages": [
-                {
-                    "message_id": 99,
-                    "sender_id": 1,
-                    "recipient_id": 2,
-                    "content": "Hello",
-                    "timestamp": "2024-01-02T14:20:00Z",
-                    "status": "delivered"
-                    },
-                {
-                    "message_id": 100,
-                    "sender_id": 2,
-                    "recipient_id": 1,
-                    "content": "Hey! All good?",
-                    "timestamp": "2024-01-02T14:21:00Z",
-                    "status": "read"
+    if limit <= 0 or skip < 0:
+        raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="limit param can't be less than or equal to zero, and skip param can't be less than zero.",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
+    try:
+        if search:
+            conversation = db.query(Conversation).join(ConversationParticipants, Conversation.id == ConversationParticipants.conversation_id).filter(ConversationParticipants.user_id == current_user.id).filter(ConversationParticipants.conversation_id == conv_id).first()
+            messages = db.query(Message).filter(Message.conversation_id == conv_id).filter(Message.content.contains(search)).limit(limit).offset(skip).all()
+        else:
+            conversation = db.query(Conversation).join(ConversationParticipants, Conversation.id == ConversationParticipants.conversation_id).filter(ConversationParticipants.user_id == current_user.id).filter(ConversationParticipants.conversation_id == conv_id).first()
+            messages = db.query(Message).filter(Message.conversation_id == conv_id).limit(limit).offset(skip).all()
+        return {
+                "id": conversation.id,
+                "title": conversation.title,
+                "participants": conversation.participants,
+                "conv_messages": {
+                    "skipped": skip,
+                    "limit": limit,
+                    "search_value": search,
+                    "messages": messages
                     }
-                ]
-            }
+                }
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal server error",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
 
 
 @router.delete("/{id}")

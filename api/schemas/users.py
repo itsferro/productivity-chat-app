@@ -40,7 +40,7 @@ class UserProfile(UserOut):
 class UsersList(BaseModel):
     """
     """
-    skiped: int
+    skipped: int
     limit: int
     search_value: Optional[str]
     users: list[UserOut]

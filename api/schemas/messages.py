@@ -26,6 +26,9 @@ class MessOut(BaseModel):
 class MessList(BaseModel):
     """
     """
+    skipped: int
+    limit: int
+    search_value: Optional[str]
     messages: list[MessOut]
 
 class MessUpdate(BaseModel):

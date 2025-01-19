@@ -39,7 +39,7 @@ def retrieve_users(
         else:
             users = db.query(User).limit(limit).offset(skip).all()
         return {
-                "skiped": skip,
+                "skipped": skip,
                 "limit": limit,
                 "search_value": search,
                 "users": users
