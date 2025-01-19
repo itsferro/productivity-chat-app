@@ -6,6 +6,7 @@ from base import Base
 from models.conversations import Conversation
 from models.users import User
 from models.relations_models import ConversationParticipants
+from models.messages import Message
 """
 """
 

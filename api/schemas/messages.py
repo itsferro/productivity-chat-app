@@ -1,7 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
-from schemas.users import UserOut
 """
 """
 
@@ -9,19 +8,28 @@ from schemas.users import UserOut
 class MessIn(BaseModel):
     """
     """
+    conversation_id: int
+    content: str
+
 
 class MessOut(BaseModel):
     """
     """
-
-class MessDetails(MessOut):
-    """
-    """
+    id: int
+    conversation_id: int
+    sender_id: int
+    content: str
+    status: str
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
 class MessList(BaseModel):
     """
     """
+    messages: list[MessOut]
 
 class MessUpdate(BaseModel):
     """
     """
+    content: Optional[str] = None
+    status: Optional[str] = None
