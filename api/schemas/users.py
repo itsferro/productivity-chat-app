@@ -40,7 +40,7 @@ class UserProfile(UserOut):
 class UsersList(BaseModel):
     """
     """
-    skiped: int
+    skipped: int
     limit: int
     search_value: Optional[str]
     users: list[UserOut]
@@ -54,7 +54,6 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     todoist_token: Optional[str] = None
-    updated_at: Optional[datetime] = datetime.now()
 
     class Config:
         from_attributes = True
