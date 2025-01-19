@@ -82,20 +82,92 @@ def retrieve_message_details(
                 )
 
 
-@router.put("/{id}")
-def edit_message():
-    return {
-            "message_id": 101,
-            "sender_id": 1,
-            "recipient_id": 2,
-            "content": "Hello, how are you?",
-            "timestamp": "2024-01-02T14:22:00Z",
-            "status": "sent"
-            }
+@router.put("/{id}", response_model=MessOut)
+def edit_message(
+        mess_id: int,
+        updated_mess: MessUpdate,
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
+        ):
+    """
+    """
+    if mess_id <= 0:
+        raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="conversation id can't be less than or equal to zero.",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
+    if updated_mess:
+        try:
+            message = db.query(Message).filter(Message.id == mess_id).first()
+        except Exception as e:
+            print(e)
+            raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Internal server error",
+                    headers={"WWW-Authenticate": "Bearer"}
+                    )
+        if message and message.sender_id is current_user.id:
+            print(message)
+            message.updated_at = datetime.utcnow()
+            message.update(db, **updated_mess.dict(exclude_unset=True))
+            return message
+        else:
+            print(message)
+            raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=f"you're not the sender of this message, or either the message by id={mess_id} does not exist or you're not part of it is conversation",
+                    headers={"WWW-Authenticate": "Bearer"}
+                    )
+    else:
+        raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"you either have to provide a content or status or both in the payload of you'r request",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
 
 
 @router.delete("/{id}")
-def delete_message():
-    return {
-            "message": "message deleted successfully"
-            }
+def delete_message(
+        mess_id: int,
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
+        ):
+    """
+    """
+    if mess_id <= 0:
+        raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="conversation id can't be less than or equal to zero.",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
+    try:
+        message = db.query(Message).filter(Message.id == mess_id).first()
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal server error",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
+    if message and message.sender_id is current_user.id:
+        print(message)
+        try:
+            message.delete(db)
+            return {
+                    "message": "message deleted successfully"
+                    }
+        except Exception as e:
+            print(message)
+            raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Internal server error",
+                    headers={"WWW-Authenticate": "Bearer"}
+                    )
+    else:
+        print(message)
+        raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"you're not the sender of this message, or either the message by id={mess_id} does not exist or you're not part of it is conversation",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
