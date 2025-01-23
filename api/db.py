@@ -11,11 +11,10 @@ from models.messages import Message
 """
 
 
-
 SQLALCHEMY_DATABASE_URL = settings.dev_database_url
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, 
+    SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False} if "sqlite" in SQLALCHEMY_DATABASE_URL else {},
     echo=True
 )
@@ -28,8 +27,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-#Base = declarative_base()
 
 def init_db():
     """
