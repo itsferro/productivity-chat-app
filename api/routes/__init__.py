@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-from .auth import router as auth_router
-from .conv import router as conversations_router
-from .mess import router as messages_router
-from .users import router as users_router
-from .tasks import router as tasks_router
+from routes.auth import router as auth_router
+from routes.conv import router as conversations_router
+from routes.mess import router as messages_router
+from routes.users import router as users_router
+from routes.tasks import router as tasks_router
 """
 """
 
