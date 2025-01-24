@@ -1,12 +1,6 @@
-from db import engine, Base
-from models import users
+from db import init_db
 """
 """
-
-def init_db():
-    """
-    """
-    Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
     init_db()

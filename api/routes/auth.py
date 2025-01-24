@@ -1,71 +1,74 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from db import get_db
-from models.users import User
 from datetime import datetime, timedelta
-from utils.jwt import get_password_hash
-from utils.jwt import authenticate_user
-from utils.jwt import create_access_token
-from utils.jwt import revoke_token
-from utils.jwt import get_user
+from db import get_db
+from utils import jwt
+from models import users
+from schemas.auth import TokenOut
+from schemas.users import UserIn, UserOut
 """
 """
 
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-db = {}
-router = APIRouter(prefix="/auth")
+router = APIRouter(
+        prefix="/auth",
+        tags=['Authentication']
+        )
+
+#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-@router.post("/signup")
-async def user_signup(username: str, password: str, email: str, db: Session = Depends(get_db)):
+@router.post("/signup", status_code=status.HTTP_201_CREATED, response_model=UserOut)
+def user_signup(new_user: UserIn, db: Session = Depends(get_db)):
     """
     """
-    user = get_user(db, username)
+    user = jwt.get_user(db, new_user.username)
     if user:
         raise HTTPException(status_code=400, detail="Username already exists")
 
-    hashed_password = get_password_hash(password)
-    user = User(
-        username=username,
-        email=email,
-        hashed_password=hashed_password
-        )
-    user.create(db)
-    return {
-            "message": "User registered successfully",
-            "user_data": user
-            }
-
-@router.post("/login")
-async def user_login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    """
-    """
-    user = authenticate_user(db, form_data.username, form_data.password)
-    if not user:
+    hashed_password = jwt.hash_password(new_user.password)
+    new_user.password = hashed_password
+    try:
+        user = users.User(**new_user.dict())
+        user.create(db)
+    except Exception as e:
+        print(e)
         raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal server error",
                 headers={"WWW-Authenticate": "Bearer"}
                 )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires)
+    return user
+
+
+@router.post("/login", response_model=TokenOut)
+def user_login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    """
+    user = jwt.authenticate_user(db, user_credentials.username, user_credentials.password)
+
+    if not user:
+        raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid Credentials",
+                headers={"WWW-Authenticate": "Bearer"}
+                )
+
+    access_token = jwt.create_access_token(
+        data={"sub": user.username}, expires_delta=None)
+
     return {
             "access_token": access_token,
-            "refresh_token": "<REFRESH_TOKEN>",
             "token_type": "Bearer",
-            "expires_in": access_token_expires
             }
 
 
-@router.post("/logout")
-async def user_logout(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    """
-    """
-    revoke_token(token)
-    return {
-            "message": "Logged out successfully"
-            }
+#@router.post("/logout")
+#def user_logout(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+#    """
+#    """
+#    jwt.revoke_token(token)
+#    return {
+#            "message": "Logged out successfully"
+#            }
