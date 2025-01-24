@@ -14,7 +14,7 @@ from models import *
 config = context.config
 config.set_main_option(
         "sqlalchemy.url",
-        settings.dev_database_url)
+        settings.database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
