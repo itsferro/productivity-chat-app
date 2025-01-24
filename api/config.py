@@ -9,7 +9,7 @@ dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.env")
 load_dotenv(dotenv_path)
 
 class Settings(BaseSettings):
-    dev_database_url: str
+    database_url: str
     test_database_url: str
     secret_key: str
     algorithm: str
