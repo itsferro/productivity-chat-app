@@ -1,73 +1,159 @@
-A productivity chat app API
-This is a productivity chat API built with FastAPI and SQLAlchemy. It has integrations with the productivity apps, and helps user Get Things Done easier, faster, and efficient
+---
 
-Features
-User Authentication with JWT access tokens
-CRUD operations for users, messages, and coverstions
-Support for real time chatting
-Efficient database handling with SQLAlchemy and PostgreSQL
-Exception handling for token validation and error responses
-Automatic schema migrations using Alembic
+```markdown
+# Productivity Chat App
 
+A real-time messaging platform designed to help users efficiently manage conversations, track tasks, and integrate with productivity tools like Todoist. This app uses FastAPI, PostgreSQL, and integrates external APIs for task management and calendar functionalities.
 
-Getting Started
-1. Clone the Repository
-git clone https://github.com/itsferro/productivity-chat-app/
+---
+
+## Features
+
+- **User Authentication**: Secure login with JWT-based authentication.
+- **Real-time Messaging**: Conversations between users with support for media messages (future enhancements).
+- **Task Integration**: Ability to send messages to Todoist as tasks.
+- **Conversation Management**: Manage conversations, participants, and task prioritization.
+- **Search and Pagination**: Efficient searching and paginated results for conversations and messages.
+
+---
+
+## Technologies Used
+
+- **Backend Framework**: FastAPI
+- **Database**: PostgreSQL
+- **Authentication**: JWT
+- **Message Queue**: Future enhancements can integrate something like Celery or RabbitMQ for offline messages (coming soon).
+- **To-Do List Integration**: Todoist API for creating tasks from messages.
+- **Testing**: Pytest for unit and integration tests.
+
+---
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/productivity-chat-app.git
 cd productivity-chat-app
+```
 
-2. Set Up Virtual Environment
-python3 -m venv env source env/bin/activate
+### 2. Set up the environment
 
-3. Install Dependencies
-poetry install
+Create a `.env` file or use the sample template to fill in your environment variables:
 
-4. Configure Environment Variables
-Create a .env file in the project root:
-
-DATABASE_URL=postgresql+asyncpg://username:password@localhost:5432/task_db
-SECRET_KEY=your_secret_key
+```env
+DATABASE_URL=postgresql://user:password@localhost/dbname
+SECRET_KEY=your-secret-key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+TODOIST_API_KEY=your-todoist-api-key
+```
 
-5. Run Database Migrations
+### 3. Install dependencies
+
+Create a virtual environment and install required Python dependencies.
+
+```bash
+python3 -m venv env
+source env/bin/activate  # On Windows use `env\Scripts\activate`
+pip install -r requirements.txt
+```
+
+### 4. Database Setup
+
+Run the migration scripts to set up the database schema.
+
+```bash
+# Assuming Alembic is used for migrations
 alembic upgrade head
+```
 
-6. Start the Application
-fastapi dev api/
+### 5. Running the Application
 
-The API will be available at http://localhost:8000.
+Run the app using `uvicorn`.
 
-API Endpoints
-Authentication
-POST /auth/signup - Register a new user
-POST /auth/login - Login and receive an access token
+```bash
+uvicorn api.main:app --reload
+```
 
-Users
-GET /users/{user_id} - Get user details by ID
-PUT /users/{user_id} - Update user details
-DELETE /users/{user_id} - Delete a user
+### 6. Access the API
 
-Tasks
+Open the app in your browser at `http://127.0.0.1:8000`. You can access the API documentation via Swagger UI at `http://127.0.0.1:8000/docs`.
 
+---
 
-Models
-Conversation: Fields include title, priority.
-User: Fields include username, email, phone, and last_seen_online.
-Messages: Fields include content, status.
+## API Endpoints
 
-Authentication
-After logging in, users receive an access token which should be included in the Authorization header for protected routes:
+### Authentication
 
-Authorization: Bearer your_jwt_token
+- **POST `/auth/login`**: Login a user and obtain a JWT access token.  
+  - Input: Username and password.
+  - Output: Access token and token type.
 
-Testing
-Run tests with pytest:
+### Conversations
 
+- **GET `/conversations/`**: Retrieve all conversations of the authenticated user.
+  - Query parameters: `limit`, `skip`, `search` for pagination and searching by conversation title.
+  - Output: List of conversations.
+
+- **POST `/conversations/`**: Create a new conversation.
+  - Input: List of participants and optional fields like `priority` and `title`.
+  - Output: Newly created conversation details.
+
+### Messages
+
+- **POST `/messages/`**: Send a message in a conversation.
+  - Input: `conversation_id` and `content` of the message.
+  - Output: The newly created message.
+
+### Tasks
+
+- **POST `/tasks/`**: Add a message as a Todoist task.
+  - Input: `message_id` to extract content.
+  - Output: Task creation in Todoist with the task's URL.
+
+---
+
+## Testing
+
+### Running Tests
+
+To run the tests, ensure you have `pytest` installed and use the following command:
+
+```bash
 pytest
+```
 
-Future Enhancements
-Future goals include:
-Creating a frontend interface
+You can also run the tests using `pytest` with additional configuration in your IDE, or set up a continuous integration pipeline for automated tests.
 
-Author
-Peninnah Kyakuwa pennykyakuwa@gmail.com
+---
+
+## Contribution
+
+Feel free to fork this repository and create a pull request with any improvements, bug fixes, or suggestions.
+
+---
+
+## License
+
+Distributed under the MIT License. See LICENSE for more information.
+
+---
+
+## Future Features
+
+- **Real-time Notifications**: Integrate websockets for live message notifications.
+- **Task Creation from Messages**: Expand to include task integration with multiple productivity apps (e.g., Google Calendar).
+- **Offline Messages**: Implement handling for offline users and delayed message delivery using a message queue.
+```
+
+---
+
+### Breakdown of `README.md`:
+- **App Overview**: A description of the app and its features.
+- **Technologies Used**: An outline of key technologies and libraries.
+- **Installation Instructions**: Step-by-step guide on how to set up the app locally, including environment setup, database configuration, and running the app.
+- **API Endpoints**: A summary of the key API endpoints along with expected inputs and outputs.
+- **Testing**: How to run the tests for your app.
+- **Contribution**: Guidelines for contributing to the repository.
+- **License**: Indicates the MIT License, which you can update based on your actual licensing preferences.
