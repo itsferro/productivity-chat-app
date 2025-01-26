@@ -20,6 +20,7 @@ class MessOut(BaseModel):
     sender_id: int
     content: str
     status: str
+    todoist_task_url: Optional[str]
     created_at: datetime
     updated_at: Optional[datetime] = None
 

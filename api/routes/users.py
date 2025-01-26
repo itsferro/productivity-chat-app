@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Optional, Union
 from datetime import datetime
-from db import get_db
-from utils.jwt import get_current_user, hash_password, verify_password
-from models.users import User
-from schemas.users import UsersList, UserProfile, UserOut, UserUpdate
+from api.db import get_db
+from api.utils.jwt import get_current_user, hash_password, verify_password
+from api.models.users import User
+from api.schemas.users import UsersList, UserProfile, UserOut, UserUpdate
 """
 """
 

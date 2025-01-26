@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-from db import get_db
-from utils import jwt
-from models import users
-from schemas.auth import TokenOut
-from schemas.users import UserIn, UserOut
+from api.db import get_db
+from api.utils import jwt
+from api.models import users
+from api.schemas.auth import TokenOut
+from api.schemas.users import UserIn, UserOut
 """
 """
 
