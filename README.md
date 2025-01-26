@@ -9,6 +9,7 @@ the api is publicly available on "http://138.197.188.193/"
 **Feras Alzaidi**:
 - Email: feras.mamon.alzaidi@gmail.com
 - GitHub: itsferro
+
 **Peninnah Kyakuwa**:
 - Email: pennykyakuwa@gmail.com
 - GitHub: Penin65n
