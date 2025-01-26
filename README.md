@@ -1,4 +1,4 @@
-```markdown
+markdown
 # Productivity Chat App
 
 A real-time messaging platform designed to help users efficiently manage conversations, track tasks, and integrate with productivity tools like Todoist. This app uses FastAPI, PostgreSQL, and integrates external APIs for task management and calendar functionalities.
@@ -143,7 +143,6 @@ Distributed under the MIT License. See LICENSE for more information.
 - **Real-time Notifications**: Integrate websockets for live message notifications.
 - **Task Creation from Messages**: Expand to include task integration with multiple productivity apps (e.g., Google Calendar).
 - **Offline Messages**: Implement handling for offline users and delayed message delivery using a message queue.
-```
 
 ---
 
