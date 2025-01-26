@@ -43,7 +43,7 @@ class ConvUpdate(BaseModel):
     """
     """
     title: Optional[str] = None
-    participants: Optional[list[int]] = list[None]
+    participants: Optional[list[int]] = None
     priority: Optional[str] = None
 
 
