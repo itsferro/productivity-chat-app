@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Bool
 from sqlalchemy.orm import relationship, Session
 from datetime import datetime
 from sqlalchemy.sql import func
-from base import Base
+from api.base import Base
 """
 """
 

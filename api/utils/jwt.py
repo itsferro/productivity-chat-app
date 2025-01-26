@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from db import get_db
-from config import settings
-from schemas.auth import TokenData
-from models.users import User
+from api.db import get_db
+from api.config import settings
+from api.schemas.auth import TokenData
+from api.models.users import User
 """
 """
 
@@ -57,7 +57,7 @@ def authenticate_user(db, username: str, password: str):
     return user
 
 
-def create_access_token(data: TokenData, expires_delta: timedelta):
+def create_access_token(data: TokenData, expires_delta: timedelta = None):
     """
     """
     to_encode = data.copy()

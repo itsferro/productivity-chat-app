@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime
-from db import get_db
-from utils.jwt import get_current_user
-from models.users import User
-from models.conversations import Conversation
-from models.relations_models import ConversationParticipants
-from models.messages import Message
-from schemas.messages import MessIn, MessOut, MessUpdate
+from api.db import get_db
+from api.utils.jwt import get_current_user
+from api.models.users import User
+from api.models.conversations import Conversation
+from api.models.relations_models import ConversationParticipants
+from api.models.messages import Message
+from api.schemas.messages import MessIn, MessOut, MessUpdate
 """
 """
 

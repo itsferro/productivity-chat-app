@@ -1,9 +1,11 @@
+__all__ = ['auth', 'conv', 'mess', 'tasks', 'users']
+
 from fastapi import APIRouter
-from routes.auth import router as auth_router
-from routes.conv import router as conversations_router
-from routes.mess import router as messages_router
-from routes.users import router as users_router
-from routes.tasks import router as tasks_router
+from api.routes.auth import router as auth_router
+from api.routes.conv import router as conversations_router
+from api.routes.mess import router as messages_router
+from api.routes.users import router as users_router
+from api.routes.tasks import router as tasks_router
 """
 """
 

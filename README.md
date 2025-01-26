@@ -1,12 +1,14 @@
 A productivity chat app API
-This is a productivity chat API built with FastAPI and SQLModel. It has integrations with the productivity apps, and helps user Get Things Done easier, faster, and efficient
+This is a productivity chat API built with FastAPI and SQLAlchemy. It has integrations with the productivity apps, and helps user Get Things Done easier, faster, and efficient
 
 Features
 User Authentication with JWT access tokens
 CRUD operations for users, messages, and coverstions
 Support for real time chatting
-Efficient database handling with SQLModel and PostgreSQL
-exception handling for token validation and error responses
+Efficient database handling with SQLAlchemy and PostgreSQL
+Exception handling for token validation and error responses
+Automatic schema migrations using Alembic
+
 
 Getting Started
 1. Clone the Repository
@@ -27,7 +29,10 @@ SECRET_KEY=your_secret_key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
-5. Start the Application
+5. Run Database Migrations
+alembic upgrade head
+
+6. Start the Application
 fastapi dev api/
 
 The API will be available at http://localhost:8000.

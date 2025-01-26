@@ -1,8 +1,8 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
-from schemas.users import UserOut
-from schemas.messages import MessOut, MessList
+from api.schemas.users import UserOut
+from api.schemas.messages import MessOut, MessList
 """
 """
 

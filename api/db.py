@@ -1,12 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from config import settings
-from base import Base
-from models.conversations import Conversation
-from models.users import User
-from models.relations_models import ConversationParticipants
-from models.messages import Message
+from api.config import settings
+from api.base import Base
+from api.models import *
+#from models.conversations import Conversation
+#from models.users import User
+#from models.relations_models import ConversationParticipants
+#from models.messages import Message
 """
 """
 

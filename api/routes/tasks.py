@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime
 from todoist_api_python.api import TodoistAPI
-from db import get_db
-from utils.jwt import get_current_user
-from models.users import User
-from models.messages import Message
-from schemas.todoist import TaskCreate
+from api.db import get_db
+from api.utils.jwt import get_current_user
+from api.models.users import User
+from api.models.messages import Message
+from api.schemas.todoist import TaskCreate
 """
 """
 
@@ -66,9 +66,14 @@ def add_message_as_Todoist_task(
                     status_code=status.HTTP_502_BAD_GATEWAY,
                     detail="Failed to interact with the Todoist API. Please try again later."
                     )
-
+        message.todoist_task_url = task.url
+        message.update(db)
         return {
-                "message": "successfully added a task to your Todoist account"
+                "message": "successfully added a task to your Todoist account",
+                "task_details": {
+                    "content": task.content,
+                    "url": task.url
+                    }
                 }
     else:
         print(message)
