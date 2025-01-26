@@ -5,14 +5,14 @@ A productivity messaging app designed to help users efficiently capture task to 
 the api is publicly available on "http://138.197.188.193/"
 ---
 
-## Aothoers
+## Authors
 **Feras Alzaidi**:
 - Email: feras.mamon.alzaidi@gmail.com
-- GitHub: itsferro
+- GitHub: https://github.com/itsferro
 
 **Peninnah Kyakuwa**:
 - Email: pennykyakuwa@gmail.com
-- GitHub: Penin65n
+- GitHub: https://github.com/Penin65n
 
 ---
 
@@ -133,11 +133,3 @@ Open the app in your browser at `http://127.0.0.1:8000`. You can access the API 
 - **Real-time Notifications**: Integrate websockets for live message notifications.
 - **Task Creation from Messages**: Expand to include task integration with multiple productivity apps (e.g., Google Calendar).
 - **Offline Messages**: Implement handling for offline users and delayed message delivery using a message queue.
-
----
-
-### Breakdown of `README.md`:
-- **App Overview**: A description of the app and its features.
-- **Technologies Used**: An outline of key technologies and libraries.
-- **Installation Instructions**: Step-by-step guide on how to set up the app locally, including environment setup, database configuration, and running the app.
-- **API Endpoints**: A summary of the key API endpoints along with expected inputs and outputs.
