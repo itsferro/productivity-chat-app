@@ -11,8 +11,8 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True, index=True)
-    conversation_id = Column(Integer, ForeignKey("conversations.id"), nullable=False)
-    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    conversation_id = Column(Integer, ForeignKey("conversations.id", ondelete='CASCADE'), nullable=False)
+    sender_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
     content = Column(Text, nullable=False)
     status = Column(String, default="sent")
     todoist_task_url = Column(String, nullable=True)
