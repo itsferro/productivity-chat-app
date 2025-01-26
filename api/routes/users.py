@@ -142,37 +142,23 @@ def update_user_profile_detail(
                 )
 
 
-@router.delete("/{id}")
+@router.delete("/")
 def delete_user(
-        user_id: int,
         current_user: User = Depends(get_current_user),
         db: Session = Depends(get_db)
         ):
     """
     """
-    if user_id <= 0:
+    try:
+        current_user.delete(db)
+        return {
+                "message": "user deleted successfully"
+                }
+    except Exception as e:
+        print(e)
         raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="user id can't be less than or equal to zero.",
-                headers={"WWW-Authenticate": "Bearer"}
-                )
-    if user_id is current_user.id:
-        try:
-            current_user.delete(db)
-            return {
-                    "message": "user deleted successfully"
-                    }
-        except Exception as e:
-            print(e)
-            raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="ther's no user with this id.",
-                    headers={"WWW-Authenticate": "Bearer"}
-                    )
-    else:
-        raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="you're only allowed to delete your own profile, You are not allowed to delete another user's profile.",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal server error (database related)",
                 headers={"WWW-Authenticate": "Bearer"}
                 )
 
