@@ -1,73 +1,135 @@
-A productivity chat app API
-This is a productivity chat API built with FastAPI and SQLAlchemy. It has integrations with the productivity apps, and helps user Get Things Done easier, faster, and efficient
+# Productivity Chat App
 
-Features
-User Authentication with JWT access tokens
-CRUD operations for users, messages, and coverstions
-Support for real time chatting
-Efficient database handling with SQLAlchemy and PostgreSQL
-Exception handling for token validation and error responses
-Automatic schema migrations using Alembic
+A productivity messaging app designed to help users efficiently capture task to Get Things Done productivity by integrating with productivity tools like Todoist. This app uses FastAPI, PostgreSQL, and integrates external APIs for task management.
 
+the api is publicly available on "http://138.197.188.193/"
+---
 
-Getting Started
-1. Clone the Repository
-git clone https://github.com/itsferro/productivity-chat-app/
+## Authors
+**Feras Alzaidi**:
+- Email: feras.mamon.alzaidi@gmail.com
+- GitHub: https://github.com/itsferro
+
+**Peninnah Kyakuwa**:
+- Email: pennykyakuwa@gmail.com
+- GitHub: https://github.com/Penin65n
+
+---
+
+## Features
+
+- **User Authentication**: Secure login with JWT-based authentication.
+- **Real-time Messaging(not implemented yet)**: Conversations between users with support for media messages (future enhancements).
+- **Task Integration**: Ability to send messages to Todoist as tasks.
+- **Conversation Management**: Manage conversations participants, and priority.
+- **Search and Pagination**: Efficient searching and paginated results for users, conversations, and messages.
+
+---
+
+## Technologies Used
+
+- **Backend Framework**: FastAPI
+- **Database**: PostgreSQL
+- **Authentication**: JWT
+- **Message Queue**: Future enhancements can integrate something like Celery or RabbitMQ for offline messages (coming soon).
+- **To-Do List Integration**: Todoist API for creating tasks from messages.
+- **Testing**: Pytest for unit and integration tests.
+
+---
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/productivity-chat-app.git
 cd productivity-chat-app
+```
 
-2. Set Up Virtual Environment
-python3 -m venv env source env/bin/activate
+### 2. Set up the environment
 
-3. Install Dependencies
-poetry install
+Create a `.env` file or use the sample template to fill in your environment variables:
 
-4. Configure Environment Variables
-Create a .env file in the project root:
-
-DATABASE_URL=postgresql+asyncpg://username:password@localhost:5432/task_db
-SECRET_KEY=your_secret_key
+```env
+DATABASE_URL=postgresql://user:password@localhost/dbname
+SECRET_KEY=your-secret-key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
 
-5. Run Database Migrations
+### 3. Install dependencies
+
+Create a virtual environment and install required Python dependencies.
+
+```bash
+python3 -m venv env
+source env/bin/activate  # On Windows use `env\Scripts\activate`
+pip install -r requirements.txt
+```
+
+### 4. Database Setup
+
+Run the migration scripts to set up the database schema.
+
+```bash
+# Assuming Alembic is used for migrations
 alembic upgrade head
+```
 
-6. Start the Application
-fastapi dev api/
+### 5. Running the Application
 
-The API will be available at http://localhost:8000.
+Run the app using `uvicorn`.
 
-API Endpoints
-Authentication
-POST /auth/signup - Register a new user
-POST /auth/login - Login and receive an access token
+```bash
+uvicorn api.main:app --reload
+```
 
-Users
-GET /users/{user_id} - Get user details by ID
-PUT /users/{user_id} - Update user details
-DELETE /users/{user_id} - Delete a user
+### 6. Access the API
 
-Tasks
+Open the app in your browser at `http://127.0.0.1:8000`. You can access the API documentation via Swagger UI at `http://127.0.0.1:8000/docs`.
 
+---
 
-Models
-Conversation: Fields include title, priority.
-User: Fields include username, email, phone, and last_seen_online.
-Messages: Fields include content, status.
+## API Endpoints
 
-Authentication
-After logging in, users receive an access token which should be included in the Authorization header for protected routes:
+### Authentication
 
-Authorization: Bearer your_jwt_token
+- **POST `/auth/signup`**: Sign up a new user by providing username, password, and an optional email.
+- **POST `/auth/login`**: Login a user and obtain a JWT access token.  
 
-Testing
-Run tests with pytest:
+### Users
 
-pytest
+- **GET `/users/`**: Retrieve all users.
+- **GET `/users/{id}/status`**: (not implemented yet) Retrieve the user online/offline status.
+- **GET `/users/{id}`**: Retrieve user details.
+- **PUT `/users/{id}`**: Edit user details.
+- **DELETE `/users/{id}`**: Delete user.
+- **POST `/users/bans`**: (not implemented yet) Retrieve all users.
 
-Future Enhancements
-Future goals include:
-Creating a frontend interface
+### Conversations
 
-Author
-Peninnah Kyakuwa pennykyakuwa@gmail.com
+- **POST `/conversations/`**: reate a new conversation between the authenticated user and any other user.
+- **GET `/conversations/`**: Retrieve all conversations of the authenticated user.
+- **GET `/conversations/{id}/details`**: Retrieve all conversations details.
+- **PUT `/conversations/{id}/details`**: Edit all conversations details.
+- **GET `/conversations/{id}`**: Retrieve all conversations messages.
+- **DELETE `/conversations/{id}`**: Delete conversation.
+
+### Messages
+
+- **POST `/messages/`**: Send a message in a conversation.
+- **GET `/messages/{id}`**: Get message details.
+- **PUT `/messages/{id}`**: Update a message content or status.
+- **DELETE `/messages/{id}`**: Delete a message.
+
+### Tasks
+
+- **POST `/tasks/`**: Add a message as a Todoist task.
+
+---
+
+## Future Features
+
+- **Real-time Notifications**: Integrate websockets for live message notifications.
+- **Task Creation from Messages**: Expand to include task integration with multiple productivity apps (e.g., Google Calendar).
+- **Offline Messages**: Implement handling for offline users and delayed message delivery using a message queue.
