@@ -1,17 +1,27 @@
-markdown
 # Productivity Chat App
 
-A real-time messaging platform designed to help users efficiently manage conversations, track tasks, and integrate with productivity tools like Todoist. This app uses FastAPI, PostgreSQL, and integrates external APIs for task management and calendar functionalities.
+A productivity messaging app designed to help users efficiently capture task to Get Things Done productivity by integrating with productivity tools like Todoist. This app uses FastAPI, PostgreSQL, and integrates external APIs for task management.
+
+the api is publicly available on "http://138.197.188.193/"
+---
+
+## Aothoers
+**Feras Alzaidi**:
+- Email: feras.mamon.alzaidi@gmail.com
+- GitHub: itsferro
+**Peninnah Kyakuwa**:
+- Email: pennykyakuwa@gmail.com
+- GitHub: Penin65n
 
 ---
 
 ## Features
 
 - **User Authentication**: Secure login with JWT-based authentication.
-- **Real-time Messaging**: Conversations between users with support for media messages (future enhancements).
+- **Real-time Messaging(not implemented yet)**: Conversations between users with support for media messages (future enhancements).
 - **Task Integration**: Ability to send messages to Todoist as tasks.
-- **Conversation Management**: Manage conversations, participants, and task prioritization.
-- **Search and Pagination**: Efficient searching and paginated results for conversations and messages.
+- **Conversation Management**: Manage conversations participants, and priority.
+- **Search and Pagination**: Efficient searching and paginated results for users, conversations, and messages.
 
 ---
 
@@ -44,7 +54,6 @@ DATABASE_URL=postgresql://user:password@localhost/dbname
 SECRET_KEY=your-secret-key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
-TODOIST_API_KEY=your-todoist-api-key
 ```
 
 ### 3. Install dependencies
@@ -84,57 +93,37 @@ Open the app in your browser at `http://127.0.0.1:8000`. You can access the API 
 
 ### Authentication
 
+- **POST `/auth/signup`**: Sign up a new user by providing username, password, and an optional email.
 - **POST `/auth/login`**: Login a user and obtain a JWT access token.  
-  - Input: Username and password.
-  - Output: Access token and token type.
+
+### Users
+
+- **GET `/users/`**: Retrieve all users.
+- **GET `/users/{id}/status`**: (not implemented yet) Retrieve the user online/offline status.
+- **GET `/users/{id}`**: Retrieve user details.
+- **PUT `/users/{id}`**: Edit user details.
+- **DELETE `/users/{id}`**: Delete user.
+- **POST `/users/bans`**: (not implemented yet) Retrieve all users.
 
 ### Conversations
 
+- **POST `/conversations/`**: reate a new conversation between the authenticated user and any other user.
 - **GET `/conversations/`**: Retrieve all conversations of the authenticated user.
-  - Query parameters: `limit`, `skip`, `search` for pagination and searching by conversation title.
-  - Output: List of conversations.
-
-- **POST `/conversations/`**: Create a new conversation.
-  - Input: List of participants and optional fields like `priority` and `title`.
-  - Output: Newly created conversation details.
+- **GET `/conversations/{id}/details`**: Retrieve all conversations details.
+- **PUT `/conversations/{id}/details`**: Edit all conversations details.
+- **GET `/conversations/{id}`**: Retrieve all conversations messages.
+- **DELETE `/conversations/{id}`**: Delete conversation.
 
 ### Messages
 
 - **POST `/messages/`**: Send a message in a conversation.
-  - Input: `conversation_id` and `content` of the message.
-  - Output: The newly created message.
+- **GET `/messages/{id}`**: Get message details.
+- **PUT `/messages/{id}`**: Update a message content or status.
+- **DELETE `/messages/{id}`**: Delete a message.
 
 ### Tasks
 
 - **POST `/tasks/`**: Add a message as a Todoist task.
-  - Input: `message_id` to extract content.
-  - Output: Task creation in Todoist with the task's URL.
-
----
-
-## Testing
-
-### Running Tests
-
-To run the tests, ensure you have `pytest` installed and use the following command:
-
-```bash
-pytest
-```
-
-You can also run the tests using `pytest` with additional configuration in your IDE, or set up a continuous integration pipeline for automated tests.
-
----
-
-## Contribution
-
-Feel free to fork this repository and create a pull request with any improvements, bug fixes, or suggestions.
-
----
-
-## License
-
-Distributed under the MIT License. See LICENSE for more information.
 
 ---
 
@@ -151,6 +140,3 @@ Distributed under the MIT License. See LICENSE for more information.
 - **Technologies Used**: An outline of key technologies and libraries.
 - **Installation Instructions**: Step-by-step guide on how to set up the app locally, including environment setup, database configuration, and running the app.
 - **API Endpoints**: A summary of the key API endpoints along with expected inputs and outputs.
-- **Testing**: How to run the tests for your app.
-- **Contribution**: Guidelines for contributing to the repository.
-- **License**: Indicates the MIT License, which you can update based on your actual licensing preferences.
